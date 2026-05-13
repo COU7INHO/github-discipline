@@ -87,6 +87,17 @@ const cleanCode = lines.map((l) => l.slice(minIndent)).join('\n');
     font-size: 0.9rem;
     color: var(--text-muted);
   }
+
+  @media (max-width: 640px) {
+    .code-head {
+      padding: 0.4rem 0.85rem;
+      font-size: 0.7rem;
+    }
+
+    .code-action {
+      font-size: 0.6rem;
+    }
+  }
 </style>
 
 <script>

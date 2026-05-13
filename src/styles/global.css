@@ -88,7 +88,6 @@ body {
   line-height: 1.7;
   font-feature-settings: 'ss01', 'ss02', 'cv11';
   min-height: 100vh;
-  overflow-x: hidden;
 }
 
 /* Subtle grain texture overlay */
@@ -309,5 +308,43 @@ pre::before {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   Mobile typography & spacing adjustments
+   ============================================================ */
+
+@media (max-width: 640px) {
+  html {
+    scroll-padding-top: 90px;
+  }
+
+  body {
+    font-size: 15.5px;
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  li {
+    font-size: 1rem;
+  }
+
+  h3 {
+    font-size: 1.35rem;
+  }
+
+  pre {
+    padding: 1rem 1.1rem;
+    font-size: 0.8rem;
+    border-radius: var(--radius-md);
+  }
+
+  code {
+    font-size: 0.85em;
+    word-break: break-word;
   }
 }

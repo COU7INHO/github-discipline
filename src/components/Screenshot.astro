@@ -134,4 +134,34 @@ const { src, alt, caption, chrome = 'browser', url = 'github.com/your-org/your-r
     text-align: center;
     line-height: 1.5;
   }
+
+  @media (max-width: 640px) {
+    .screenshot {
+      margin: 1.75rem -0.5rem;
+    }
+
+    .chrome-bar {
+      padding: 0.55rem 0.7rem;
+      grid-template-columns: 50px 1fr 0;
+    }
+
+    .chrome-dots span {
+      width: 8px;
+      height: 8px;
+    }
+
+    .chrome-url {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.6rem;
+    }
+
+    .screenshot-image {
+      min-height: 0;
+    }
+
+    figcaption {
+      font-size: 0.85rem;
+      padding: 0 0.5rem;
+    }
+  }
 </style>

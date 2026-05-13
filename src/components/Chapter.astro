@@ -136,11 +136,29 @@ const { id, number, title, subtitle, accent = 'signature' } = Astro.props;
 
   @media (max-width: 768px) {
     .chapter {
-      padding: 4rem 1.5rem;
+      padding: 4rem 1.25rem;
     }
 
     .chapter-head {
       margin-bottom: 2.5rem;
+    }
+
+    .chapter-title {
+      font-size: clamp(2rem, 8vw, 2.75rem);
+    }
+
+    .chapter-subtitle {
+      font-size: 1.125rem;
+      margin-top: 1rem;
+    }
+
+    .chapter-number {
+      margin-bottom: 1rem;
+    }
+
+    .chapter-body :global(h3) {
+      margin-top: 2.5rem;
+      font-size: 1.35rem;
     }
   }
 </style>
