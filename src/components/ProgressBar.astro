@@ -1,0 +1,27 @@
+---
+---
+
+<div class="progress" aria-hidden="true">
+  <div id="progress-bar-fill" class="progress-fill"></div>
+</div>
+
+<style>
+  .progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: transparent;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-signature) 0%, var(--accent-purple) 100%);
+    box-shadow: 0 0 12px var(--accent-signature);
+    transition: width 50ms linear;
+  }
+</style>

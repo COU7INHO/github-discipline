@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" font-family="-apple-system, BlinkMacSystemFont, sans-serif">
+  <rect width="1200" height="720" fill="#0d1117"/>
+  <rect x="0" y="0" width="1200" height="60" fill="#161b22"/>
+  <text x="40" y="36" fill="#e6edf3" font-size="14">Files changed · #124</text>
+
+  <!-- file header -->
+  <rect x="40" y="90" width="1120" height="40" rx="6" fill="#161b22" stroke="#30363d"/>
+  <text x="60" y="115" fill="#e6edf3" font-size="13" font-family="monospace">src/exports/users.py</text>
+  <text x="1140" y="115" fill="#7d8590" font-size="12" text-anchor="end" font-family="monospace">+48 −3</text>
+
+  <!-- diff -->
+  <g font-family="monospace" font-size="13">
+    <!-- context line -->
+    <rect x="40" y="130" width="1120" height="22" fill="#0d1117"/>
+    <text x="55" y="146" fill="#7d8590">12</text>
+    <text x="100" y="146" fill="#e6edf3">def export_users(start: date, end: date) -> bytes:</text>
+
+    <!-- context -->
+    <rect x="40" y="152" width="1120" height="22" fill="#0d1117"/>
+    <text x="55" y="168" fill="#7d8590">13</text>
+    <text x="100" y="168" fill="#e6edf3">    rows = User.objects.filter(created__range=(start, end))</text>
+
+    <!-- added -->
+    <rect x="40" y="174" width="1120" height="22" fill="#1c3729"/>
+    <text x="55" y="190" fill="#3fb950">+</text>
+    <text x="75" y="190" fill="#7d8590">14</text>
+    <text x="100" y="190" fill="#3fb950">    if not request.user.has_perm('export_users'):</text>
+
+    <rect x="40" y="196" width="1120" height="22" fill="#1c3729"/>
+    <text x="55" y="212" fill="#3fb950">+</text>
+    <text x="75" y="212" fill="#7d8590">15</text>
+    <text x="100" y="212" fill="#3fb950">        raise PermissionDenied</text>
+
+    <rect x="40" y="218" width="1120" height="22" fill="#0d1117"/>
+    <text x="55" y="234" fill="#7d8590">16</text>
+    <text x="100" y="234" fill="#e6edf3">    return write_csv(rows)</text>
+  </g>
+
+  <!-- inline comment -->
+  <rect x="40" y="260" width="1120" height="200" rx="6" fill="#161b22" stroke="#30363d"/>
+  <rect x="40" y="260" width="1120" height="40" fill="#0d1117" stroke="#30363d"/>
+  <circle cx="62" cy="280" r="10" fill="#58a6ff"/>
+  <text x="82" y="285" fill="#e6edf3" font-size="13">joao <tspan fill="#7d8590">left a review comment</tspan></text>
+
+  <g font-size="13">
+    <text x="60" y="324" fill="#e6edf3" font-weight="600">Permission check is good — one suggestion</text>
+    <text x="60" y="350" fill="#b8c0c9">For large date ranges this will block the request. Consider</text>
+    <text x="60" y="368" fill="#b8c0c9">moving the export to a background job and returning the</text>
+    <text x="60" y="386" fill="#b8c0c9">job ID — same pattern as ReportExport.</text>
+
+    <text x="60" y="420" fill="#7d8590" font-style="italic">Not a blocker for this PR, but worth a follow-up issue.</text>
+  </g>
+
+  <rect x="1040" y="270" width="100" height="22" rx="11" fill="#1f6feb33" stroke="#1f6feb55"/>
+  <text x="1090" y="285" fill="#58a6ff" font-size="11" text-anchor="middle">suggestion</text>
+
+  <!-- review status -->
+  <rect x="40" y="490" width="1120" height="80" rx="6" fill="#0d1117" stroke="#3fb950"/>
+  <circle cx="80" cy="530" r="14" fill="#3fb950"/>
+  <text x="80" y="535" fill="white" font-size="14" text-anchor="middle">✓</text>
+  <text x="110" y="525" fill="#e6edf3" font-size="14" font-weight="600">joao approved these changes</text>
+  <text x="110" y="548" fill="#7d8590" font-size="12">3 comments resolved · 1 follow-up suggested</text>
+
+  <text x="600" y="680" fill="#3d444d" font-size="11" text-anchor="middle" font-family="monospace" letter-spacing="2">PLACEHOLDER · REPLACE WITH GITHUB SCREENSHOT</text>
+</svg>

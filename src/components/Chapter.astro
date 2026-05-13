@@ -1,0 +1,146 @@
+---
+interface Props {
+  id: string;
+  number: string;
+  title: string;
+  subtitle?: string;
+  accent?: 'green' | 'blue' | 'purple' | 'yellow' | 'red' | 'signature';
+}
+
+const { id, number, title, subtitle, accent = 'signature' } = Astro.props;
+---
+
+<section id={id} data-chapter class={`chapter accent-${accent}`}>
+  <div class="chapter-inner">
+    <header class="chapter-head reveal">
+      <div class="chapter-number">
+        <span class="chapter-n">Chapter {number}</span>
+        <span class="chapter-rule"></span>
+      </div>
+      <h2 class="chapter-title">{title}</h2>
+      {subtitle && <p class="chapter-subtitle">{subtitle}</p>}
+    </header>
+
+    <div class="chapter-body">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .chapter {
+    padding: 7rem 4rem;
+    border-top: 1px solid var(--border-subtle);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chapter::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle at top left, var(--accent-color, var(--accent-signature)) 0%, transparent 70%);
+    opacity: 0.04;
+    pointer-events: none;
+  }
+
+  .chapter.accent-green { --accent-color: var(--accent-green); }
+  .chapter.accent-blue { --accent-color: var(--accent-blue); }
+  .chapter.accent-purple { --accent-color: var(--accent-purple); }
+  .chapter.accent-yellow { --accent-color: var(--accent-yellow); }
+  .chapter.accent-red { --accent-color: var(--accent-red); }
+  .chapter.accent-signature { --accent-color: var(--accent-signature); }
+
+  .chapter-inner {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .chapter-head {
+    margin-bottom: 3.5rem;
+  }
+
+  .chapter-number {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .chapter-n {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent-color, var(--accent-signature));
+    font-weight: 500;
+  }
+
+  .chapter-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent-color, var(--accent-signature)) 0%, transparent 100%);
+    opacity: 0.5;
+  }
+
+  .chapter-title {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(2.5rem, 4.5vw, 3.5rem);
+    letter-spacing: -0.035em;
+    color: var(--text-primary);
+    line-height: 1.05;
+  }
+
+  .chapter-subtitle {
+    margin-top: 1.25rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.375rem;
+    color: var(--text-muted);
+    letter-spacing: -0.01em;
+    max-width: 580px;
+    line-height: 1.4;
+  }
+
+  .chapter-body :global(h3) {
+    margin-top: 3.5rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.625rem;
+    letter-spacing: -0.02em;
+  }
+
+  .chapter-body :global(h3::before) {
+    content: '§';
+    color: var(--accent-color, var(--accent-signature));
+    margin-right: 0.5rem;
+    font-weight: 300;
+    opacity: 0.6;
+  }
+
+  .chapter-body :global(h4) {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .chapter-body :global(p) {
+    margin-bottom: 1.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .chapter {
+      padding: 4rem 1.5rem;
+    }
+
+    .chapter-head {
+      margin-bottom: 2.5rem;
+    }
+  }
+</style>

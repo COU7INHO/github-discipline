@@ -1,0 +1,65 @@
+---
+interface Props {
+  color?: 'green' | 'blue' | 'purple' | 'yellow' | 'red' | 'gray';
+  label: string;
+}
+
+const { color = 'gray', label } = Astro.props;
+---
+
+<span class={`badge badge-${color}`}>{label}</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.65rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    border-radius: 999px;
+    border: 1px solid var(--badge-border);
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    letter-spacing: 0.01em;
+    line-height: 1.4;
+    vertical-align: middle;
+    margin: 0 0.15rem;
+  }
+
+  .badge-green {
+    --badge-bg: rgba(63, 185, 80, 0.15);
+    --badge-border: rgba(63, 185, 80, 0.4);
+    --badge-text: var(--accent-green);
+  }
+
+  .badge-blue {
+    --badge-bg: rgba(88, 166, 255, 0.15);
+    --badge-border: rgba(88, 166, 255, 0.4);
+    --badge-text: var(--accent-blue);
+  }
+
+  .badge-purple {
+    --badge-bg: rgba(188, 140, 255, 0.15);
+    --badge-border: rgba(188, 140, 255, 0.4);
+    --badge-text: var(--accent-purple);
+  }
+
+  .badge-yellow {
+    --badge-bg: rgba(227, 179, 65, 0.15);
+    --badge-border: rgba(227, 179, 65, 0.4);
+    --badge-text: var(--accent-yellow);
+  }
+
+  .badge-red {
+    --badge-bg: rgba(248, 81, 73, 0.15);
+    --badge-border: rgba(248, 81, 73, 0.4);
+    --badge-text: var(--accent-red);
+  }
+
+  .badge-gray {
+    --badge-bg: var(--bg-elev-2);
+    --badge-border: var(--border-default);
+    --badge-text: var(--text-secondary);
+  }
+</style>

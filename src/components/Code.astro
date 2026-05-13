@@ -1,0 +1,106 @@
+---
+import { Code as ShikiCode } from 'astro:components';
+
+interface Props {
+  code: string;
+  lang?: string;
+  filename?: string;
+  caption?: string;
+}
+
+const { code, lang = 'bash', filename, caption } = Astro.props;
+
+// Trim and normalize indentation
+const lines = code.replace(/^\n+|\n+$/g, '').split('\n');
+const minIndent = lines
+  .filter((l) => l.trim().length)
+  .reduce((min, l) => Math.min(min, l.match(/^ */)?.[0].length ?? 0), Infinity);
+const cleanCode = lines.map((l) => l.slice(minIndent)).join('\n');
+---
+
+<div class="code-wrap reveal">
+  <div class="code-head">
+    {filename && <span class="code-filename">{filename}</span>}
+    {!filename && <span class="code-lang">{lang}</span>}
+    <span class="code-action" data-copy={cleanCode}>Copy</span>
+  </div>
+  <div class="code-body">
+    <ShikiCode code={cleanCode} lang={lang as any} theme="github-dark-default" />
+  </div>
+  {caption && <p class="code-caption">{caption}</p>}
+</div>
+
+<style>
+  .code-wrap {
+    margin: 2rem 0;
+  }
+
+  .code-head {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border-subtle);
+    border-bottom: none;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .code-filename {
+    color: var(--text-secondary);
+    flex: 1;
+  }
+
+  .code-lang {
+    color: var(--accent-signature);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    flex: 1;
+  }
+
+  .code-action {
+    color: var(--text-muted);
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    transition: color 150ms ease;
+    user-select: none;
+  }
+
+  .code-action:hover {
+    color: var(--accent-signature);
+  }
+
+  .code-body :global(pre) {
+    margin: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-color: var(--border-subtle) !important;
+  }
+
+  .code-caption {
+    margin-top: 0.75rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('[data-copy]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const code = btn.getAttribute('data-copy') ?? '';
+      try {
+        await navigator.clipboard.writeText(code);
+        const original = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(() => {
+          btn.textContent = original;
+        }, 1500);
+      } catch {}
+    });
+  });
+</script>

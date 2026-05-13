@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" font-family="-apple-system, BlinkMacSystemFont, sans-serif">
+  <rect width="1200" height="720" fill="#0a0d12"/>
+
+  <!-- terminal chrome -->
+  <rect x="0" y="0" width="1200" height="44" fill="#161b22"/>
+  <circle cx="22" cy="22" r="6" fill="#ed6a5e"/>
+  <circle cx="42" cy="22" r="6" fill="#e0c04c"/>
+  <circle cx="62" cy="22" r="6" fill="#62c655"/>
+  <text x="600" y="28" fill="#7d8590" font-size="13" text-anchor="middle" font-family="monospace">claude-code · /create-issue</text>
+
+  <g font-family="monospace" font-size="14">
+    <!-- prompt -->
+    <text x="40" y="100" fill="#e8b059">❯</text>
+    <text x="65" y="100" fill="#e6edf3">/create-issue add CSV export to admin panel</text>
+
+    <!-- claude response -->
+    <text x="40" y="150" fill="#bc8cff">claude</text>
+    <text x="40" y="180" fill="#7d8590">I'll create a well-structured issue. Drafting now...</text>
+
+    <!-- generated issue -->
+    <rect x="40" y="210" width="1120" height="440" rx="6" fill="#0d1117" stroke="#30363d"/>
+    <rect x="40" y="210" width="1120" height="34" fill="#161b22" stroke="#30363d"/>
+    <text x="60" y="232" fill="#e8b059" font-size="12">generated-issue.md</text>
+
+    <text x="60" y="275" fill="#3fb950">## Title</text>
+    <text x="60" y="298" fill="#e6edf3">Export user activity to CSV from admin panel</text>
+
+    <text x="60" y="335" fill="#3fb950">## Context</text>
+    <text x="60" y="358" fill="#b8c0c9">The support team currently exports activity manually each week.</text>
+    <text x="60" y="376" fill="#b8c0c9">A self-service export will save ~3 hours/week.</text>
+
+    <text x="60" y="412" fill="#3fb950">## Acceptance Criteria</text>
+    <text x="60" y="435" fill="#b8c0c9">- [ ] Admin can select date range</text>
+    <text x="60" y="453" fill="#b8c0c9">- [ ] CSV file downloads with UTF-8 BOM</text>
+    <text x="60" y="471" fill="#b8c0c9">- [ ] Permissions enforced (export_users)</text>
+
+    <text x="60" y="508" fill="#3fb950">## Out of scope</text>
+    <text x="60" y="531" fill="#b8c0c9">JSON export, scheduled exports</text>
+
+    <text x="60" y="568" fill="#3fb950">## Labels</text>
+    <text x="60" y="591" fill="#bc8cff">feature</text>
+    <text x="135" y="591" fill="#58a6ff">P2</text>
+    <text x="170" y="591" fill="#3fb950">backend</text>
+  </g>
+
+  <text x="600" y="700" fill="#3d444d" font-size="11" text-anchor="middle" font-family="monospace" letter-spacing="2">PLACEHOLDER · REPLACE WITH CLAUDE CODE SCREENSHOT</text>
+</svg>

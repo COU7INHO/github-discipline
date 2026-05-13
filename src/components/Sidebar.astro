@@ -1,0 +1,191 @@
+---
+const chapters = [
+  { id: 'introduction', n: '00', label: 'Preface' },
+  { id: 'repository-setup', n: '01', label: 'Repository Setup' },
+  { id: 'branching-strategy', n: '02', label: 'Branching Strategy' },
+  { id: 'issues-first', n: '03', label: 'Issues First' },
+  { id: 'working-branches', n: '04', label: 'Working on Branches' },
+  { id: 'pull-requests', n: '05', label: 'Pull Requests' },
+  { id: 'code-review', n: '06', label: 'Code Review' },
+  { id: 'merging', n: '07', label: 'Merging Strategy' },
+  { id: 'ai-agents', n: '08', label: 'AI Agents' },
+];
+---
+
+<aside class="sidebar">
+  <div class="sidebar-inner">
+    <a href="#top" class="brand">
+      <img src="/brand.png" alt="" class="brand-mark" width="56" height="56" />
+      <div class="brand-text">
+        <span class="brand-title">The Discipline</span>
+        <span class="brand-sub">A GitHub field manual</span>
+      </div>
+    </a>
+
+    <nav class="nav">
+      <span class="nav-eyebrow">Contents</span>
+      <ol class="nav-list">
+        {chapters.map((c) => (
+          <li>
+            <a href={`#${c.id}`} data-nav-link class="nav-link">
+              <span class="nav-n">{c.n}</span>
+              <span class="nav-label">{c.label}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <footer class="sidebar-foot">
+      <span class="label-mono">v1.0 — Living document</span>
+    </footer>
+  </div>
+</aside>
+
+<style>
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    border-right: 1px solid var(--border-subtle);
+    background: linear-gradient(180deg, var(--bg-elev-1) 0%, var(--bg-base) 100%);
+    z-index: 10;
+  }
+
+  .sidebar-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+    overflow-y: auto;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-primary);
+    border-bottom: none;
+    margin-bottom: 3rem;
+  }
+
+  .brand-mark {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    flex-shrink: 0;
+    display: block;
+    filter: drop-shadow(0 0 12px rgba(232, 176, 89, 0.2));
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .brand-title {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+  }
+
+  .brand-sub {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .nav {
+    flex: 1;
+  }
+
+  .nav-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 1rem;
+    padding-left: 0.25rem;
+  }
+
+  .nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .nav-list li {
+    margin: 0;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.55rem 0.5rem 0.55rem 0.6rem;
+    border-radius: var(--radius-sm);
+    border-left: 2px solid transparent;
+    color: var(--text-muted);
+    transition: all 200ms ease;
+    border-bottom: none;
+    font-size: 0.95rem;
+  }
+
+  .nav-link:hover {
+    color: var(--text-primary);
+    background: var(--bg-elev-2);
+  }
+
+  .nav-link.is-active {
+    color: var(--text-primary);
+    border-left-color: var(--accent-signature);
+    background: linear-gradient(90deg, var(--bg-elev-2) 0%, transparent 100%);
+  }
+
+  .nav-n {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+
+  .nav-link.is-active .nav-n {
+    color: var(--accent-signature);
+  }
+
+  .nav-label {
+    font-family: var(--font-sans);
+    letter-spacing: -0.005em;
+  }
+
+  .sidebar-foot {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  @media (max-width: 960px) {
+    .sidebar {
+      position: relative;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .sidebar-inner {
+      padding: 1.25rem;
+    }
+
+    .brand {
+      margin-bottom: 1.5rem;
+    }
+  }
+</style>

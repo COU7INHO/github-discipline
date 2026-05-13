@@ -1,0 +1,123 @@
+---
+interface Props {
+  type?: 'rule' | 'tip' | 'warning' | 'danger' | 'note';
+  title?: string;
+}
+
+const { type = 'rule', title } = Astro.props;
+
+const config = {
+  rule:    { label: 'Rule',    icon: '◆' },
+  tip:     { label: 'Tip',     icon: '✦' },
+  warning: { label: 'Caution', icon: '▲' },
+  danger:  { label: 'Never',   icon: '×' },
+  note:    { label: 'Note',    icon: '·' },
+};
+
+const cfg = config[type];
+---
+
+<aside class={`callout callout-${type} reveal`}>
+  <div class="callout-mark">
+    <span class="callout-icon">{cfg.icon}</span>
+    <span class="callout-label">{title ?? cfg.label}</span>
+  </div>
+  <div class="callout-body">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .callout {
+    margin: 2rem 0;
+    padding: 1.5rem 1.75rem;
+    border: 1px solid var(--callout-border, var(--border-default));
+    background: var(--callout-bg, var(--bg-elev-1));
+    border-radius: var(--radius-md);
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .callout-rule {
+    --callout-border: rgba(232, 176, 89, 0.3);
+    --callout-bg: rgba(232, 176, 89, 0.04);
+    --callout-accent: var(--accent-signature);
+  }
+
+  .callout-tip {
+    --callout-border: rgba(63, 185, 80, 0.3);
+    --callout-bg: rgba(63, 185, 80, 0.04);
+    --callout-accent: var(--accent-green);
+  }
+
+  .callout-warning {
+    --callout-border: rgba(227, 179, 65, 0.3);
+    --callout-bg: rgba(227, 179, 65, 0.04);
+    --callout-accent: var(--accent-yellow);
+  }
+
+  .callout-danger {
+    --callout-border: rgba(248, 81, 73, 0.35);
+    --callout-bg: rgba(248, 81, 73, 0.04);
+    --callout-accent: var(--accent-red);
+  }
+
+  .callout-note {
+    --callout-border: rgba(88, 166, 255, 0.3);
+    --callout-bg: rgba(88, 166, 255, 0.04);
+    --callout-accent: var(--accent-blue);
+  }
+
+  .callout-mark {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 60px;
+    padding-top: 0.15rem;
+  }
+
+  .callout-icon {
+    font-size: 1.5rem;
+    color: var(--callout-accent);
+    line-height: 1;
+  }
+
+  .callout-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--callout-accent);
+    font-weight: 500;
+  }
+
+  .callout-body :global(p) {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .callout-body :global(p + p) {
+    margin-top: 0.75rem;
+  }
+
+  .callout-body :global(code) {
+    background: var(--bg-base);
+  }
+
+  @media (max-width: 640px) {
+    .callout {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    .callout-mark {
+      flex-direction: row;
+      min-width: 0;
+    }
+  }
+</style>

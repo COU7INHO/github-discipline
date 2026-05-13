@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" font-family="-apple-system, BlinkMacSystemFont, sans-serif">
+  <rect width="1200" height="720" fill="#0d1117"/>
+  <rect x="0" y="0" width="1200" height="60" fill="#161b22"/>
+  <text x="40" y="36" fill="#e6edf3" font-size="14">Branch protection rules · main</text>
+
+  <text x="40" y="110" fill="#e6edf3" font-size="22" font-weight="400">Protect matching branches</text>
+
+  <g font-size="14">
+    <!-- rule 1 -->
+    <rect x="40" y="150" width="20" height="20" rx="3" fill="#1f6feb"/>
+    <text x="50" y="166" fill="white" font-size="14" text-anchor="middle">✓</text>
+    <text x="75" y="166" fill="#e6edf3" font-weight="600">Require a pull request before merging</text>
+    <text x="75" y="186" fill="#7d8590" font-size="12">Required approving reviews: 1</text>
+
+    <!-- rule 2 -->
+    <rect x="40" y="220" width="20" height="20" rx="3" fill="#1f6feb"/>
+    <text x="50" y="236" fill="white" font-size="14" text-anchor="middle">✓</text>
+    <text x="75" y="236" fill="#e6edf3" font-weight="600">Dismiss stale pull request approvals when new commits are pushed</text>
+
+    <!-- rule 3 -->
+    <rect x="40" y="280" width="20" height="20" rx="3" fill="#1f6feb"/>
+    <text x="50" y="296" fill="white" font-size="14" text-anchor="middle">✓</text>
+    <text x="75" y="296" fill="#e6edf3" font-weight="600">Require status checks to pass before merging</text>
+    <text x="75" y="316" fill="#7d8590" font-size="12">tests, lint, build</text>
+
+    <!-- rule 4 -->
+    <rect x="40" y="350" width="20" height="20" rx="3" fill="#1f6feb"/>
+    <text x="50" y="366" fill="white" font-size="14" text-anchor="middle">✓</text>
+    <text x="75" y="366" fill="#e6edf3" font-weight="600">Require conversation resolution before merging</text>
+
+    <!-- rule 5 -->
+    <rect x="40" y="410" width="20" height="20" rx="3" fill="#1f6feb"/>
+    <text x="50" y="426" fill="white" font-size="14" text-anchor="middle">✓</text>
+    <text x="75" y="426" fill="#e6edf3" font-weight="600">Do not allow bypassing the above settings</text>
+    <text x="75" y="446" fill="#7d8590" font-size="12">Even repository administrators must follow the rules</text>
+
+    <!-- rule 6 -->
+    <rect x="40" y="480" width="20" height="20" rx="3" fill="#21262d" stroke="#30363d"/>
+    <text x="75" y="496" fill="#e6edf3" font-weight="600">Allow force pushes</text>
+    <text x="75" y="516" fill="#f85149" font-size="12">Disabled — never force-push to protected branches</text>
+  </g>
+
+  <rect x="40" y="570" width="240" height="40" rx="6" fill="#238636"/>
+  <text x="160" y="595" fill="white" font-size="14" text-anchor="middle">Save changes</text>
+
+  <text x="600" y="680" fill="#3d444d" font-size="11" text-anchor="middle" font-family="monospace" letter-spacing="2">PLACEHOLDER · REPLACE WITH GITHUB SCREENSHOT</text>
+</svg>

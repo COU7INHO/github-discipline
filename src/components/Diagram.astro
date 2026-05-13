@@ -1,0 +1,85 @@
+---
+// Inline SVG diagram of the branching model
+---
+
+<div class="diagram reveal">
+  <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Branching model diagram">
+    <defs>
+      <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#3fb950" stop-opacity="0.4"/>
+        <stop offset="100%" stop-color="#3fb950" stop-opacity="1"/>
+      </linearGradient>
+      <linearGradient id="devGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#58a6ff" stop-opacity="0.4"/>
+        <stop offset="100%" stop-color="#58a6ff" stop-opacity="1"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Lane labels -->
+    <text x="20" y="55" class="lane-label main-lbl">main</text>
+    <text x="20" y="135" class="lane-label dev-lbl">development</text>
+    <text x="20" y="225" class="lane-label feat-lbl">feature/123</text>
+
+    <!-- main line -->
+    <line x1="120" y1="50" x2="660" y2="50" stroke="url(#mainGrad)" stroke-width="2.5"/>
+    <circle cx="120" cy="50" r="6" fill="#3fb950"/>
+    <circle cx="620" cy="50" r="6" fill="#3fb950"/>
+    <text x="620" y="35" class="commit-lbl">release</text>
+
+    <!-- dev line -->
+    <line x1="120" y1="130" x2="660" y2="130" stroke="url(#devGrad)" stroke-width="2.5"/>
+    <circle cx="120" cy="130" r="5" fill="#58a6ff"/>
+    <circle cx="280" cy="130" r="5" fill="#58a6ff"/>
+    <circle cx="480" cy="130" r="5" fill="#58a6ff"/>
+
+    <!-- feature line -->
+    <line x1="280" y1="130" x2="280" y2="220" stroke="#bc8cff" stroke-width="2" stroke-dasharray="3 3" opacity="0.6"/>
+    <line x1="280" y1="220" x2="480" y2="220" stroke="#bc8cff" stroke-width="2.5"/>
+    <line x1="480" y1="220" x2="480" y2="130" stroke="#bc8cff" stroke-width="2" stroke-dasharray="3 3" opacity="0.6"/>
+    <circle cx="280" cy="220" r="5" fill="#bc8cff"/>
+    <circle cx="380" cy="220" r="4" fill="#bc8cff" opacity="0.7"/>
+    <circle cx="480" cy="220" r="5" fill="#bc8cff"/>
+
+    <!-- merge arrows -->
+    <text x="395" y="208" class="merge-lbl">commits</text>
+    <text x="490" y="180" class="merge-lbl">PR merge ↑</text>
+    <text x="510" y="100" class="merge-lbl">validated ↑</text>
+  </svg>
+</div>
+
+<style>
+  .diagram {
+    margin: 2.5rem 0;
+    padding: 2rem;
+    background: var(--bg-elev-1);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .diagram svg {
+    width: 100%;
+    height: auto;
+    max-width: 720px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  :global(.lane-label) {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  :global(.main-lbl) { fill: #3fb950; }
+  :global(.dev-lbl) { fill: #58a6ff; }
+  :global(.feat-lbl) { fill: #bc8cff; }
+
+  :global(.commit-lbl),
+  :global(.merge-lbl) {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    fill: #7d8590;
+    letter-spacing: 0.05em;
+  }
+</style>

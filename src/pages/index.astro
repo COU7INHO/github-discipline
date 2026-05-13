@@ -1,0 +1,889 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Chapter from '../components/Chapter.astro';
+import Callout from '../components/Callout.astro';
+import Screenshot from '../components/Screenshot.astro';
+import Badge from '../components/Badge.astro';
+import Code from '../components/Code.astro';
+import Principle from '../components/Principle.astro';
+import Grid from '../components/Grid.astro';
+import Diagram from '../components/Diagram.astro';
+
+const repoTree = `.
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.md
+│   │   ├── feature_request.md
+│   │   └── config.yml
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   ├── CODEOWNERS
+│   └── workflows/             # CI pipelines
+├── src/                       # source code
+├── tests/                     # automated tests
+├── docs/                      # architecture, decisions
+├── .gitignore
+├── CONTRIBUTING.md            # how to work on this repo
+├── LICENSE
+└── README.md                  # the front door`;
+
+const readmeExample = `# Project Name
+
+One sentence that says what this project is and who it is for.
+
+## Quick start
+
+\`\`\`bash
+git clone <repo>
+cd <repo>
+make dev
+\`\`\`
+
+## Structure
+
+- \`src/\` — application source
+- \`tests/\` — test suite
+- \`docs/\` — architecture decisions and runbooks
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md). In short: open an issue first,
+branch off \`development\`, submit a PR with reviewers assigned.
+
+## Links
+
+- Documentation — /docs
+- Issue tracker — GitHub issues
+- On-call runbook — docs/runbooks/oncall.md`;
+
+const bugTemplate = `---
+name: Bug report
+about: Something is broken
+title: 'bug: '
+labels: ['bug']
+---
+
+## What happened
+A clear description of the unexpected behavior.
+
+## Expected behavior
+What you thought would happen.
+
+## Steps to reproduce
+1.
+2.
+3.
+
+## Environment
+- Version / commit:
+- OS / browser:
+
+## Screenshots or logs
+Drag images or paste logs here.`;
+
+const branchNaming = `# Pattern
+<type>/<issue-number>-<short-description>
+
+# Examples
+feature/123-add-csv-export
+fix/156-null-pointer-on-login
+chore/192-bump-dependencies
+docs/204-update-onboarding-guide
+refactor/211-extract-payment-service`;
+
+const startWork = `# 1. Make sure development is up to date
+git checkout development
+git pull origin development
+
+# 2. Cut a new branch named for your issue
+git checkout -b feature/123-add-csv-export
+
+# 3. Push it early so the team can see it exists
+git push -u origin feature/123-add-csv-export
+
+# 4. Work, commit, push. Repeat.`;
+
+const issueBody = `## Context
+Why this matters. The user pain, the business need, the technical debt
+we are paying down. Two or three sentences.
+
+## Acceptance criteria
+- [ ] Concrete, testable outcome #1
+- [ ] Concrete, testable outcome #2
+- [ ] Concrete, testable outcome #3
+
+## Out of scope
+Things that look related but are not part of this issue. Use this
+aggressively — it prevents scope drift on the branch.
+
+## Notes
+Implementation hints, constraints, links to relevant prior art.`;
+
+const ghCreateIssue = `# Quick interactive creation
+gh issue create
+
+# Scripted, with all fields
+gh issue create \\
+  --title "feat: export user activity to CSV" \\
+  --body-file ./.github/drafts/123.md \\
+  --label "feature,P2,backend" \\
+  --assignee maria \\
+  --milestone "Q2 — Admin tooling"`;
+
+const commitPrefixes = `feat:     a new feature
+fix:      a bug fix
+docs:     documentation only
+refactor: code change that neither fixes a bug nor adds a feature
+test:     adding or correcting tests
+chore:    tooling, dependencies, build
+perf:     performance improvement`;
+
+const commitExamples = `# Good — atomic, descriptive, scoped
+feat: add CSV export endpoint for user activity
+fix: prevent null user from reaching session middleware
+refactor: extract export logic from UserController
+test: cover CSV export with empty date range
+docs: document export rate limits in README
+
+# Bad — vague, mixed concerns, useless six months later
+wip
+stuff
+fixes
+update code
+asdf`;
+
+const rebaseFlow = `# Pull latest development and rebase your branch on top
+git fetch origin
+git rebase origin/development
+
+# If conflicts, resolve them one commit at a time
+# then continue
+git rebase --continue
+
+# Push the rebased branch (force-with-lease, never plain --force)
+git push --force-with-lease`;
+
+const prTemplate = `## Summary
+One sentence: what this PR does and why.
+
+Closes #123
+
+## Changes
+- Bullet list of the substantive changes
+- Grouped by concern, not by file
+- Skip the boring ones
+
+## Test plan
+- [ ] How you tested it manually
+- [ ] What automated tests were added
+- [ ] What edge cases you considered
+
+## Screenshots / recordings
+(For UI changes — drag here.)
+
+## Notes for reviewer
+Anything tricky. Decisions you made and why. Things you're unsure
+about and want a second opinion on.`;
+
+const codeowners = `# Default owners for everything
+*                       @your-org/maintainers
+
+# Path-specific owners
+/src/payments/          @your-org/payments-team
+/src/auth/              @joao @maria
+/infra/                 @your-org/platform
+/docs/                  @ana`;
+
+const draftPr = `# Open a draft PR from your current branch
+gh pr create --draft \\
+  --title "feat: export user activity to CSV" \\
+  --body-file ./.github/drafts/pr-124.md \\
+  --reviewer joao,ana \\
+  --label "feature,backend"
+
+# When ready for review, mark it ready
+gh pr ready`;
+
+const reviewExamples = `# Blocking — must change before merge
+[blocker] This bypasses the permission check on line 47. An admin
+impersonating a user could call this. Add \`request.user.has_perm(...)\`
+or move it behind the existing decorator.
+
+# Suggestion — author's call
+[suggestion] This loop is O(n²). For the current data size it's fine,
+but if exports grow we'll hit it. Worth a follow-up issue.
+
+# Nit — pure style, take or leave
+[nit] \`usrs\` reads oddly — maybe \`users\` for symmetry with the rest?
+
+# Praise — costs nothing, worth a lot
+[praise] Nice extraction of \`apply_filters\`. Made the rest of the
+diff much easier to follow.`;
+
+const mergeCli = `# Merging via the CLI (after approval and green checks)
+gh pr merge 124 --merge --delete-branch
+
+# This creates a merge commit on development.
+# The commit message records when the branch joined the integration line,
+# and the full history of the branch stays in the graph for future archaeology.`;
+
+const releaseFlow = `# Open the release PR
+gh pr create \\
+  --base main \\
+  --head development \\
+  --title "release: v1.4.0" \\
+  --body "$(./scripts/changelog.sh v1.3.0..HEAD)"
+
+# After merge, tag the release on main
+git checkout main
+git pull
+git tag -a v1.4.0 -m "v1.4.0 — CSV export, performance fixes"
+git push origin v1.4.0`;
+
+const aiIssue = `❯ claude
+> /create-issue
+   Add CSV export to the admin panel — support says they
+   spend 3h/week doing this by hand.
+
+✓ Drafted issue with type=feature, P2, area=backend.
+✓ Acceptance criteria proposed.
+✓ Out-of-scope section flagged for your review.
+
+Open in browser to confirm and submit?`;
+
+const aiPr = `❯ /create-pr
+
+Analyzing branch feature/123-add-csv-export...
+✓ 5 commits, 218 additions, 12 deletions across 7 files
+✓ Linked issue #123 detected
+✓ Test plan inferred from new tests in tests/exports/
+
+Draft PR ready:
+
+  title:    feat: export user activity to CSV
+  base:     development
+  reviewers: joao (CODEOWNERS: src/exports/)
+  labels:   feature, backend
+  body:     [scroll to preview]
+
+Submit? [y/n/edit]`;
+
+const aiReview = `❯ /review
+
+Reviewing changes against development...
+
+⚠  src/exports/users.py:47
+   Endpoint missing permission check. Compare to
+   src/exports/reports.py:23 — same pattern expected.
+
+⚠  tests/exports/test_users.py
+   No test for empty date range. Edge case mentioned
+   in issue #123 acceptance criteria.
+
+ℹ  Documentation: export rate limits not mentioned in
+   README, but issue #123 references them.
+
+3 issues found. Fix before requesting human review?`;
+---
+
+<BaseLayout>
+  <Hero />
+
+  <Chapter
+    id="introduction"
+    number="00"
+    title="Preface"
+    subtitle="What this guide is, who it is for, and why discipline matters more than tooling."
+    accent="signature"
+  >
+    <p class="reveal">
+      Every engineer learns git eventually. Most teams never agree on <em>how</em> to use it together. The result is the same repository, lived in by ten people, accumulating ten private conventions — some written in branches no one will merge, some only legible to the person who wrote them last Tuesday.
+    </p>
+
+    <p class="reveal">
+      This guide is not a git tutorial. It is a manual of habits — the small disciplines that turn a codebase into something a team can confidently build on. Each chapter is short. Each rule has a reason. None of it requires special tooling.
+    </p>
+
+    <Callout type="rule" title="The thesis">
+      <p>Good software is shipped by good processes, not heroic engineers. The process should be visible in the repository — and the repository should teach itself to anyone who joins.</p>
+    </Callout>
+
+    <h3 class="reveal">Three pillars</h3>
+
+    <Grid cols={3}>
+      <Principle n="I" title="Structure">
+        <p>The repository's shape — its README, its branches, its templates — communicates what we value before any code is read.</p>
+      </Principle>
+      <Principle n="II" title="Discipline">
+        <p>Issues precede branches. Branches precede pull requests. Reviews precede merges. None of these steps are optional.</p>
+      </Principle>
+      <Principle n="III" title="Automation">
+        <p>Branch protections, CI, and AI agents remove the cost of doing the right thing. Make the path of least resistance the correct one.</p>
+      </Principle>
+    </Grid>
+
+    <h3 class="reveal">How to read this</h3>
+    <p class="reveal">
+      The chapters are sequential — chapter 02 assumes chapter 01. If you are reading this with your team, pause after each chapter and decide together: <em>do we already do this?</em> If yes, keep going. If no, decide who will fix it and when.
+    </p>
+  </Chapter>
+
+  <Chapter
+    id="repository-setup"
+    number="01"
+    title="Repository Setup"
+    subtitle="A good repository starts before any code is committed."
+    accent="green"
+  >
+    <p class="reveal">
+      The shape of a repository on day one tells you what to expect from it on day five hundred. A neglected README signals neglected code. A missing CONTRIBUTING file signals that no one cares how you contribute. Set the tone early.
+    </p>
+
+    <h3 class="reveal">The minimum viable structure</h3>
+
+    <Code lang="bash" filename="your-repo/" code={repoTree} />
+
+    <Screenshot
+      src="/images/placeholder-repo.svg"
+      alt="GitHub repository overview"
+      caption="A repository whose front door makes it obvious how to contribute."
+      url="github.com/your-org/your-repo"
+    />
+
+    <h3 class="reveal">The README is the front door</h3>
+
+    <p class="reveal">
+      Treat it like the first paragraph of a paper. Anyone — a new hire, a curious stakeholder, your future self at 2 a.m. — should learn in under thirty seconds <em>what this is</em>, <em>how to run it</em>, and <em>where to go next</em>.
+    </p>
+
+    <Code lang="markdown" filename="README.md" code={readmeExample} />
+
+    <Callout type="rule" title="Keep it current">
+      <p>The README rots faster than the code. Every PR that changes setup, structure, or conventions <strong>must</strong> update the README in the same diff. If you can't keep it current, delete the section — a missing section is more honest than a wrong one.</p>
+    </Callout>
+
+    <h3 class="reveal">Issue and PR templates</h3>
+
+    <p class="reveal">
+      Templates are not bureaucracy — they are how a team encodes <em>what good looks like</em>. A new contributor opens GitHub's "New issue" button and is greeted by the team's shared definition of "well described". You skip the awkward back-and-forth of <em>can you add reproduction steps?</em> because the template already asked.
+    </p>
+
+    <Code lang="markdown" filename=".github/ISSUE_TEMPLATE/bug_report.md" code={bugTemplate} />
+
+    <h3 class="reveal">Branch protection — the rules that enforce the rules</h3>
+
+    <p class="reveal">
+      Habits decay under deadline pressure. Branch protections do not. Configure them once for <code>main</code> and <code>development</code>, then forget about them — they will protect you from your own future Friday-afternoon self.
+    </p>
+
+    <Screenshot
+      src="/images/placeholder-protection.svg"
+      alt="Branch protection rules screen"
+      caption="The settings page that prevents most disasters."
+      url="github.com/your-org/your-repo/settings/branches"
+    />
+
+    <Callout type="tip" title="Bare minimum protections">
+      <p>
+        <strong>Require pull request</strong> before merging — no direct pushes.<br/>
+        <strong>Require approvals</strong> — at least one reviewer.<br/>
+        <strong>Require status checks</strong> — tests must be green.<br/>
+        <strong>Require conversations resolved</strong> — no merging while threads are open.<br/>
+        <strong>Block force pushes</strong> — protected branches are not for rewriting.
+      </p>
+    </Callout>
+  </Chapter>
+
+  <Chapter
+    id="branching-strategy"
+    number="02"
+    title="Branching Strategy"
+    subtitle="Where your code lives says as much as what it does."
+    accent="blue"
+  >
+    <p class="reveal">
+      A branching model is a contract about what each branch <em>means</em>. The model below is intentionally simple — two long-lived branches, ephemeral working branches, and a single direction of flow. It works for teams of two and teams of fifty.
+    </p>
+
+    <Diagram />
+
+    <h3 class="reveal">The two protected branches</h3>
+
+    <Grid cols={2}>
+      <Principle title="main — the production truth">
+        <p>Every commit on <code>main</code> represents code that is, or could immediately be, in production. Tagged. Releasable. <strong>Never</strong> commit directly.</p>
+      </Principle>
+      <Principle title="development — the integration line">
+        <p>Where features and fixes converge for testing together before they reach <code>main</code>. Also protected — also never committed to directly.</p>
+      </Principle>
+    </Grid>
+
+    <Callout type="danger" title="never">
+      <p>Never push to <code>main</code> directly. Not for "just a typo." Not for "the CI is broken anyway." Not under any deadline pressure. The protection rule from chapter 01 should make this impossible — if it doesn't, fix that first.</p>
+    </Callout>
+
+    <h3 class="reveal">Working branches</h3>
+
+    <p class="reveal">
+      Every piece of work happens on its own branch, cut from <code>development</code>, named for what it is and which issue it addresses. The name itself becomes a small contract: <em>this branch does this one thing</em>.
+    </p>
+
+    <Code lang="bash" filename="branch naming convention" code={branchNaming} />
+
+    <p class="reveal">
+      The prefix tells the reviewer what kind of change to expect before they read a single line. The issue number connects the branch back to its purpose. The description is for humans skimming the branches view.
+    </p>
+
+    <h3 class="reveal">Starting work — the canonical sequence</h3>
+
+    <Code lang="bash" code={startWork} />
+
+    <Screenshot
+      src="/images/placeholder-branches.svg"
+      alt="GitHub branches view"
+      caption="The branches view is a live picture of what the team is working on."
+      url="github.com/your-org/your-repo/branches"
+    />
+
+    <Callout type="tip" title="Delete after merge">
+      <p>Once a working branch is merged, delete it — both locally and on the remote. GitHub can do this automatically; turn that on in repository settings. Stale branches obscure the live work.</p>
+    </Callout>
+  </Chapter>
+
+  <Chapter
+    id="issues-first"
+    number="03"
+    title="Issues First"
+    subtitle="No issue, no branch. No branch, no code."
+    accent="purple"
+  >
+    <p class="reveal">
+      An issue is the only acceptable way work enters the repository. Before you cut a branch, before you write a line — there is an issue. It is the unit of intent. It is what makes the work <em>traceable</em> a year from now when someone asks <em>why did we do this?</em>
+    </p>
+
+    <Callout type="rule" title="The cardinal rule">
+      <p>If it is worth doing, it is worth an issue. If it is not worth an issue, it is not worth doing — at least not now.</p>
+    </Callout>
+
+    <h3 class="reveal">Anatomy of a good issue</h3>
+
+    <p class="reveal">
+      Every issue answers four questions: <em>what</em>, <em>why</em>, <em>what does done look like</em>, and <em>what is out of scope</em>. Without all four, the issue is an invitation for scope creep.
+    </p>
+
+    <Screenshot
+      src="/images/placeholder-issue.svg"
+      alt="Well-structured GitHub issue"
+      caption="An issue anyone on the team can pick up without asking a single question."
+      url="github.com/your-org/your-repo/issues/123"
+    />
+
+    <Code lang="markdown" filename="issue body" code={issueBody} />
+
+    <h3 class="reveal">Labels — the language of triage</h3>
+
+    <p class="reveal">
+      Labels are how the team talks about issues at scale. Agree on a small, fixed vocabulary and use it consistently. Too many labels is worse than too few — pick a set and stick to it.
+    </p>
+
+    <h4 class="reveal">Type</h4>
+    <p class="reveal">
+      <Badge color="red" label="bug" />
+      <Badge color="purple" label="feature" />
+      <Badge color="blue" label="docs" />
+      <Badge color="gray" label="refactor" />
+      <Badge color="gray" label="chore" />
+      <Badge color="yellow" label="question" />
+    </p>
+
+    <h4 class="reveal">Priority</h4>
+    <p class="reveal">
+      <Badge color="red" label="P0 — drop everything" />
+      <Badge color="yellow" label="P1 — this sprint" />
+      <Badge color="blue" label="P2 — soon" />
+      <Badge color="gray" label="P3 — someday" />
+    </p>
+
+    <h4 class="reveal">Area</h4>
+    <p class="reveal">
+      <Badge color="green" label="backend" />
+      <Badge color="purple" label="frontend" />
+      <Badge color="blue" label="infra" />
+      <Badge color="yellow" label="design" />
+    </p>
+
+    <h3 class="reveal">Creating issues from the command line</h3>
+
+    <p class="reveal">
+      The GitHub CLI lets you create issues without leaving the terminal — perfect for capturing context while you have it. Even better, combine it with an AI agent (see chapter 08) to draft the body from a one-line description.
+    </p>
+
+    <Code lang="bash" code={ghCreateIssue} />
+
+    <Callout type="warning" title="The drift trap">
+      <p>If you are halfway through a branch and discover an unrelated thing that needs fixing — <strong>stop</strong>, open a new issue, and finish the current one first. The temptation to "just fix it while I'm here" is how branches grow into 80-file PRs no one can review.</p>
+    </Callout>
+  </Chapter>
+
+  <Chapter
+    id="working-branches"
+    number="04"
+    title="Working on Branches"
+    subtitle="One branch, one issue, one purpose."
+    accent="yellow"
+  >
+    <p class="reveal">
+      A branch is a workspace with intent. The intent is documented in the issue it references. Everything you do on the branch should serve that intent — and only that intent.
+    </p>
+
+    <h3 class="reveal">Atomic commits, conventional messages</h3>
+
+    <p class="reveal">
+      Commits should tell a story. Each one a small, complete thought. When you read <code>git log</code> three months from now, you should be able to follow what happened — and why — without opening a single file.
+    </p>
+
+    <Code lang="bash" filename="conventional commit prefixes" code={commitPrefixes} />
+
+    <Code lang="bash" filename="examples" code={commitExamples} />
+
+    <h3 class="reveal">Keep your branch fresh</h3>
+
+    <p class="reveal">
+      A branch that has not seen <code>development</code> in three days is already drifting. Rebase or merge regularly — the longer you wait, the more painful the eventual reconciliation.
+    </p>
+
+    <Code lang="bash" code={rebaseFlow} />
+
+    <Callout type="warning" title="force-with-lease, not --force">
+      <p>Plain <code>--force</code> will overwrite someone else's work without warning. <code>--force-with-lease</code> refuses to push if the remote has commits you haven't seen. Build the habit now.</p>
+    </Callout>
+
+    <h3 class="reveal">Stay in scope</h3>
+
+    <Grid cols={2}>
+      <Principle title="Do">
+        <p>Solve exactly the issue your branch references. Refactor only what stands directly in your way. Ship the smallest thing that makes the acceptance criteria pass.</p>
+      </Principle>
+      <Principle title="Do not">
+        <p>Smuggle in "while I'm here" changes. Refactor adjacent code that isn't blocking you. Bundle two issues into one branch because it's faster. Future-proof for features no one has asked for.</p>
+      </Principle>
+    </Grid>
+  </Chapter>
+
+  <Chapter
+    id="pull-requests"
+    number="05"
+    title="Pull Requests"
+    subtitle="A pull request is a conversation, not a deposit."
+    accent="purple"
+  >
+    <p class="reveal">
+      A pull request is where your work meets the team. It is not a button you press at the end — it is a document you write <em>for the reviewer</em>. A good PR description respects the reviewer's time. A bad one wastes it.
+    </p>
+
+    <Screenshot
+      src="/images/placeholder-pr.svg"
+      alt="Well-structured pull request"
+      caption="A PR that a reviewer can understand without opening the diff."
+      url="github.com/your-org/your-repo/pull/124"
+    />
+
+    <h3 class="reveal">Anatomy of a good PR</h3>
+
+    <Code lang="markdown" filename=".github/PULL_REQUEST_TEMPLATE.md" code={prTemplate} />
+
+    <Callout type="rule" title="Always link the issue">
+      <p>Use <code>Closes #123</code> or <code>Fixes #123</code> in the description. GitHub will auto-close the issue when the PR merges — and more importantly, it gives anyone reading the issue a forward link to the implementation.</p>
+    </Callout>
+
+    <h3 class="reveal">Reviewers — always assigned, never zero</h3>
+
+    <p class="reveal">
+      A PR with no reviewer is a PR that won't get reviewed. Assign at minimum one person — by name, not "the team." If you need a domain expert, ask them directly. <code>CODEOWNERS</code> can automate this for paths that have clear ownership.
+    </p>
+
+    <Code lang="text" filename=".github/CODEOWNERS" code={codeowners} />
+
+    <h3 class="reveal">Size matters</h3>
+
+    <p class="reveal">
+      A PR that touches 50 files will not get a real review. It will get a skim and a thumbs-up. If you find your branch growing beyond ~400 lines of diff, that is a signal — split the work into a stack of smaller PRs, or break the issue down further.
+    </p>
+
+    <Grid cols={3}>
+      <Principle title="Tiny — under 100 lines">
+        <p>Reviewed in five minutes. Ship constantly. This is the target.</p>
+      </Principle>
+      <Principle title="Small — 100 to 400">
+        <p>The healthy default. Reviewed thoroughly in one sitting.</p>
+      </Principle>
+      <Principle title="Large — over 400">
+        <p>Justify it in the description, or split it. Reviewers will rubber-stamp out of fatigue.</p>
+      </Principle>
+    </Grid>
+
+    <h3 class="reveal">Draft PRs for work in progress</h3>
+
+    <p class="reveal">
+      Open the PR early as a <Badge color="gray" label="draft" />. It signals to the team that the work exists, gives CI a chance to run, and lets you collect early feedback before you've committed to a direction.
+    </p>
+
+    <Code lang="bash" code={draftPr} />
+  </Chapter>
+
+  <Chapter
+    id="code-review"
+    number="06"
+    title="Code Review"
+    subtitle="The most valuable code you write is the code you read."
+    accent="green"
+  >
+    <p class="reveal">
+      Code review is the single most leveraged activity in a software team. It catches bugs, spreads knowledge, and quietly sets the bar for what "good" means here. It deserves to be done seriously.
+    </p>
+
+    <Callout type="rule" title="Approval is a signature">
+      <p>When you click <strong>Approve</strong>, you are co-authoring the change. You share responsibility for what ships. Approve only what you would be comfortable being paged about.</p>
+    </Callout>
+
+    <h3 class="reveal">What a real review looks like</h3>
+
+    <Screenshot
+      src="/images/placeholder-review.svg"
+      alt="A thoughtful code review"
+      caption="A review that engages with the change — not a drive-by approval."
+    />
+
+    <p class="reveal">
+      A serious review reads the diff, opens the files in context, runs the code if possible, and asks the questions a good colleague would ask. It is also <em>kind</em> — the point is to improve the work, not to perform expertise.
+    </p>
+
+    <h3 class="reveal">A reviewer's checklist</h3>
+
+    <Grid cols={2}>
+      <Principle n="01" title="Correctness">
+        <p>Does it do what the issue says? Have the acceptance criteria been met? Are there edge cases the author missed — empty input, off-by-one, time zones, null?</p>
+      </Principle>
+      <Principle n="02" title="Clarity">
+        <p>Will the next person to read this understand it? Are names accurate? Is the structure obvious? Comments where intent is non-obvious?</p>
+      </Principle>
+      <Principle n="03" title="Security & safety">
+        <p>Untrusted input validated? Permissions checked? Secrets out of the code? Errors handled in a way that doesn't leak internals?</p>
+      </Principle>
+      <Principle n="04" title="Tests">
+        <p>Do the tests actually test the change? Do they cover the failure modes, not just the happy path? Would they catch a regression?</p>
+      </Principle>
+    </Grid>
+
+    <h3 class="reveal">How to give feedback</h3>
+
+    <p class="reveal">
+      Be specific. Be concrete. Distinguish what is blocking from what is opinion. Reviewers who flag everything as critical are reviewers whose feedback eventually gets ignored.
+    </p>
+
+    <Code lang="markdown" code={reviewExamples} />
+
+    <Callout type="tip" title="The suggestion block">
+      <p>GitHub's suggestion syntax (triple-backtick + <code>suggestion</code>) lets you propose exact code the author can apply with one click. Use it for small, concrete changes — typos, renames, single-line fixes. It is faster for everyone.</p>
+    </Callout>
+
+    <h3 class="reveal">When you are the author</h3>
+
+    <p class="reveal">
+      Respond to every comment. "Done" is fine. "I disagree, here's why" is better than silent dismissal. If a thread takes more than two round-trips, hop on a call — you'll resolve it in two minutes and save the audit trail for the conclusion.
+    </p>
+
+    <Callout type="danger" title="Never">
+      <p>Never approve a PR you haven't read. Never approve to "unblock" someone — if it's not ready, say so. Never merge your own PR after someone else approved it but before you addressed their comments.</p>
+    </Callout>
+  </Chapter>
+
+  <Chapter
+    id="merging"
+    number="07"
+    title="Merging Strategy"
+    subtitle="The last gate. Take it seriously."
+    accent="blue"
+  >
+    <p class="reveal">
+      Merging is when private work becomes shared work. From this moment, every other engineer's branch will inherit what you just merged. Treat the click like you treat <code>git push --force</code> — quietly, deliberately, with a moment of attention.
+    </p>
+
+    <h3 class="reveal">Two stages, one direction</h3>
+
+    <p class="reveal">
+      Feature branches merge into <code>development</code>. <code>development</code> merges into <code>main</code>. Never the reverse. Never the shortcut.
+    </p>
+
+    <Grid cols={2}>
+      <Principle title="Stage 1 — into development">
+        <p>The PR gate. Reviewed, tests green, conversation resolved. Your work joins the integration line and begins to interact with everyone else's recent work.</p>
+      </Principle>
+      <Principle title="Stage 2 — into main">
+        <p>The release gate. <code>development</code> has been tested end-to-end, deployed to staging, validated. Now — and only now — it goes to <code>main</code> and gets tagged.</p>
+      </Principle>
+    </Grid>
+
+    <h3 class="reveal">Squash, merge, or rebase?</h3>
+
+    <p class="reveal">
+      Pick one and standardize. Mixing strategies makes <code>git log</code> unreadable. The recommendation here is plain <strong>merge</strong> — every PR creates a merge commit on <code>development</code>, preserving the full history of each branch as a visible side-line in the graph. You keep the individual commit story <em>and</em> get an obvious marker for "this is when feature X joined the line."
+    </p>
+
+    <Code lang="bash" code={mergeCli} />
+
+    <h3 class="reveal">Promoting development to main</h3>
+
+    <p class="reveal">
+      This is a deliberate act, not a continuous one. Typically: a release cadence (weekly, bi-weekly), or a milestone (feature complete + validated). Open a PR from <code>development</code> to <code>main</code>, do a final review, merge.
+    </p>
+
+    <Code lang="bash" code={releaseFlow} />
+
+    <Callout type="rule" title="Tag every release">
+      <p>Tags are how you find the exact code that was running when something broke at 3 a.m. Use semantic versioning, write a real changelog, and never re-use a tag. Past releases are immutable.</p>
+    </Callout>
+
+    <Callout type="tip" title="Hotfixes — the only exception">
+      <p>For genuine production emergencies, branch directly from <code>main</code> as <code>hotfix/&lt;issue&gt;</code>, fix, PR straight back to <code>main</code>, tag, and then merge <code>main</code> back into <code>development</code> so the fix flows downstream. Use this rarely. If you find yourself hotfixing weekly, the problem is upstream — fix that.</p>
+    </Callout>
+  </Chapter>
+
+  <Chapter
+    id="ai-agents"
+    number="08"
+    title="AI Agents"
+    subtitle="A well-prompted agent enforces the discipline so you don't have to."
+    accent="purple"
+  >
+    <p class="reveal">
+      Every rule in this guide is something an AI agent can help you follow — and follow consistently. The agent is not a replacement for discipline; it is the assistant that lowers the cost of being disciplined to near zero.
+    </p>
+
+    <p class="reveal">
+      The examples below use <a href="https://claude.com/claude-code" target="_blank" rel="noopener">Claude Code</a>, but the patterns apply to any capable agent. The goal is the same: turn a one-line intent into a well-structured artifact that the team can act on.
+    </p>
+
+    <h3 class="reveal">Skill — drafting an issue</h3>
+
+    <p class="reveal">
+      You have an idea. You don't want to lose it, but you also don't want to spend ten minutes formatting it. Hand it to the agent. It reads the repository's issue template, asks one or two clarifying questions, and produces a draft that follows your conventions exactly.
+    </p>
+
+    <Screenshot
+      src="/images/placeholder-claude.svg"
+      alt="Claude Code drafting a GitHub issue"
+      caption="One line in, a fully-structured issue out."
+      chrome="app"
+    />
+
+    <Code lang="bash" filename="terminal" code={aiIssue} />
+
+    <h3 class="reveal">Skill — opening a pull request</h3>
+
+    <p class="reveal">
+      You finished the work. The agent reads your branch diff, your commits, and the issue you closed. It writes a PR description that actually summarizes the changes — including a test plan, risk notes, and reviewer suggestions based on <code>CODEOWNERS</code>.
+    </p>
+
+    <Code lang="bash" filename="terminal" code={aiPr} />
+
+    <h3 class="reveal">Skill — pre-review</h3>
+
+    <p class="reveal">
+      Before you ask a human to review, ask the agent. It will catch the things you'd be embarrassed to be told about — missing tests, untyped function signatures, a permission check you forgot, a TODO you committed by accident.
+    </p>
+
+    <Code lang="bash" filename="terminal" code={aiReview} />
+
+    <Callout type="rule" title="The agent reviews you, the human reviews the agent">
+      <p>An AI pre-review never replaces a human review. It catches the obvious so the human reviewer can focus on the subtle — architecture, intent, the things only a teammate who knows the system can judge.</p>
+    </Callout>
+
+    <h3 class="reveal">Building your own skills</h3>
+
+    <p class="reveal">
+      The real power is custom skills that encode <em>your</em> team's conventions. The "good issue" template is yours. The "we always assign joao to payments PRs" rule is yours. Skills make those conventions executable.
+    </p>
+
+    <Grid cols={2}>
+      <Principle title="Start small">
+        <p>One skill. The most repetitive thing you do. Issue creation is usually the right first target — high frequency, high payoff.</p>
+      </Principle>
+      <Principle title="Share them">
+        <p>Skills live in the repo. Check them in. The next person to clone gets your team's habits for free — that is the entire point.</p>
+      </Principle>
+    </Grid>
+
+    <Callout type="tip" title="The compound effect">
+      <p>A team that uses agents to draft issues, PRs, and pre-reviews ships with the same discipline as the most careful engineer on the team — on every change, not just the ones that happen to be authored by them.</p>
+    </Callout>
+  </Chapter>
+
+  <section class="closing">
+    <div class="closing-inner reveal">
+      <span class="closing-eyebrow">— End of guide —</span>
+      <h2 class="closing-title">Now go practice it.</h2>
+      <p class="closing-lead">
+        Read it once. Disagree with parts. Adapt to your team. Then start enforcing
+        it on yourself before you ever ask anyone else to follow it.
+      </p>
+      <div class="closing-meta">
+        <span class="label-mono">A living document · v1.0</span>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .closing {
+    padding: 8rem 4rem;
+    border-top: 1px solid var(--border-subtle);
+    text-align: center;
+    background: radial-gradient(ellipse at top, rgba(232, 176, 89, 0.04) 0%, transparent 60%);
+  }
+
+  .closing-inner {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .closing-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent-signature);
+    display: block;
+    margin-bottom: 1.5rem;
+  }
+
+  .closing-title {
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-style: italic;
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.03em;
+  }
+
+  .closing-lead {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 3rem;
+  }
+
+  .closing-meta {
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  @media (max-width: 768px) {
+    .closing {
+      padding: 4rem 1.5rem;
+    }
+  }
+</style>
